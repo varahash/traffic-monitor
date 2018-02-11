@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Cleanup files
+rm -rf /www/traffic-monitor /www/cgi-bin/traffic_usage /www/cgi-bin/hostname
+
+
+# Cleanup firewall rules
+firewall_include_section=`uci show firewall | grep /etc/firewall.traffic-monitor | awk -F"." '/.path=/{ print $1 "." $2 }'`
+if [ -n "$firewall_include_section" ]; then
+	uci delete $firewall_include_section
+	uci commit firewall
+fi
+rm -rf /etc/firewall.traffic-monitor
+/etc/init.d/firewall restart &>/dev/null
+
+
+# Cleanup cron task
+crontab -l | grep -v -e "traffic-monitor-job" | crontab -
+/etc/init.d/cron restart
+
+
+exit 0

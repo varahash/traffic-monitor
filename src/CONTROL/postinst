@@ -1,0 +1,23 @@
+#!/bin/sh
+. /lib/functions/network.sh
+
+
+# Configure firewall
+LAN_SUBNET=
+network_get_subnet LAN_SUBNET "lan"
+echo "iptables -I FORWARD -j ACCOUNT --addr $LAN_SUBNET --tname lan -m comment --comment \"traffic-monitor rule\"" > /etc/firewall.traffic-monitor
+
+section_id=`uci add firewall include`
+uci set firewall.$section_id.path=/etc/firewall.traffic-monitor
+uci commit firewall
+
+/etc/init.d/firewall restart &>/dev/null
+
+
+# Configure cron
+{ crontab -l ; echo "0 0 * * * iptaccount -f -l lan #traffic-monitor-job" ; } | crontab -
+/etc/init.d/cron restart
+/etc/init.d/cron enable
+
+
+exit 0

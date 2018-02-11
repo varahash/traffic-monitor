@@ -1,0 +1,9 @@
+Package: traffic-monitor
+Version: 1.0.0
+Depends: iptaccount, coreutils-timeout, samba36-client, memcached
+Architecture: all
+Maintainer: Mykola Varahash
+Section: net
+Priority: optional
+Description: Web UI module that uses iptaccount to track users bandwidth usage.
+Source: https://github.com/varahash/traffic-monitor

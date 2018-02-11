@@ -1,0 +1,3 @@
+#!/bin/sh
+DATA=`iptaccount -s -l lan | sed -e '1,3d;$d'`
+echo -e "Content-type: text/csv\n\n$DATA"
